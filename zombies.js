@@ -51,6 +51,23 @@ class Weapon extends Item {
   }
 }
 
+class Food extends Item{
+  constructor(name, energy){
+    super(name);
+    this._energy = energy;
+  }
+  get energy(){
+    return this._energy;
+  }
+  set energy( value ){
+    if (typeof value === 'number'){
+      this._energy = value;
+    }
+  }
+}
+
+
+
 /**
  * Weapon Extends Item Class
  * -----------------------------
