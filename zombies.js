@@ -7,7 +7,19 @@
  * @param {string} name     The item's name.
  * @property {string} name
  */
-
+class Item {
+  constructor(name){
+    this._name = name;
+  }
+  get name () {
+    return this._name;
+  }
+  set name(value){
+    if (typeof value === 'string'){
+      this.name = value;
+    }
+  }
+}
 
 /**
  * Class => Weapon(name, damage)
@@ -24,7 +36,20 @@
  * @param {number} damage   The weapon's damage.
  * @property {number} damage
  */
-
+class Weapon extends Item {
+  constructor(name, damage){
+    super(name);
+    this._damage = damage;
+  }
+  get damage(){
+    return this._damage;
+  }
+  set damage(value){
+    if (typeof value === 'number'){
+      this._damage = value;
+    }
+  }
+}
 
 /**
  * Weapon Extends Item Class
