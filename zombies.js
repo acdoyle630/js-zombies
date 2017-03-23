@@ -16,7 +16,7 @@ class Item {
   }
   set name(value){
     if (typeof value === 'string'){
-      this.name = value;
+      this._name = value;
     }
   }
 }
@@ -65,6 +65,120 @@ class Food extends Item{
     }
   }
 }
+
+class Player {
+  constructor(name, health, strength, speed){
+    this._name = name;
+    this._health = health;
+    this._strength = strength;
+    this._speed = speed;
+    this._isAlive = true;
+    this._equipped = false;
+    this._pack = [];
+    this._maxHealth = health;
+
+  }
+  get name(){
+    return this._name;
+  }
+  set name( value ){
+    if (typeof value === 'string'){
+      this._name = value;
+    }
+  }
+  get health(){
+    return this._health;
+  }
+  set health( value ){
+    if (typeof value === 'number'){
+      this._health = value;
+    }
+  }
+  get strength(){
+    return this._strength;
+  }
+  set strength( value ){
+    if (typeof value === 'number'){
+      this._strength = value;
+    }
+  }
+  get speed (){
+    return this._speed;
+  }
+  set speed( value ){
+    if (typeof value === 'number'){
+      this._speed = value;
+    }
+  }
+  get isAlive(){
+    return this._isAlive;
+  }
+  set isAlive( value ){
+    if (typeof value === 'boolean'){
+      this._isAlive = value;
+    }
+  }
+  get equipped(){
+    return this._equipped;
+  }
+  set equipped( value ){
+    if (typeof value === 'boolean' || value instanceof Weapon === true)
+      this._equipped = value;
+  }
+  getPack (){
+      return this._pack;
+      }
+  takeItem( value ){
+    if( value instanceof Item === true && this._pack.length < 3){
+      this._pack.push( value );
+      console.log(this._name + " " + value.name);
+      return true;
+      } else {
+      console.log('pack is full and item cannot be stored');
+      return false;
+      }
+    }
+  getMaxHealth (){
+    return this._maxHealth;
+    }
+  discardItem ( value ){
+    if( value instanceof Item === true && this._pack.indexOf(value) > -1){
+      this._pack.splice(this._pack.indexOf(value), 1);
+      console.log('discarded ' + value.name);
+      return true;
+      } else {
+        console.log('cannot discard');
+        return false;
+      }
+    }
+  checkPack(){
+    console.log( this._pack);
+  }
+  //weapon check for equip
+  weaponCheck(value){
+      if (value instanceof Weapon === true){
+      return true;
+    }
+  }
+  //check pack for equip
+  packCheck( value ){
+    if (this._pack.indexOf(value) > -1){
+      return true;
+    }
+  }
+  equip( value ){
+    if (this.weaponCheck(value) === true && packCheck(value) === true){
+    this._equipped = value;
+    }
+    if (this.weaponCheck(value) === false){
+      return false;
+    }
+  }
+}
+
+var player1 = new Player('p1');
+var item1 = new Item('apple');
+player1.packCheck(item1);
 
 
 
