@@ -122,66 +122,93 @@ class Player {
     return this._equipped;
   }
   set equipped( value ){
-    if (typeof value === 'boolean' || value instanceof Weapon === true)
+    if (typeof value === 'boolean' || value instanceof Weapon === true){
       this._equipped = value;
-  }
-  getPack (){
-      return this._pack;
-      }
-  takeItem( value ){
-    if( value instanceof Item === true && this._pack.length < 3){
-      this._pack.push( value );
-      console.log(this._name + " " + value.name);
-      return true;
-      } else {
-      console.log('pack is full and item cannot be stored');
-      return false;
-      }
     }
-  getMaxHealth (){
+  }
+  getPack(){
+    return this._pack;
+  }
+  getMaxHealth() {
     return this._maxHealth;
-    }
-  discardItem ( value ){
-    if( value instanceof Item === true && this._pack.indexOf(value) > -1){
-      this._pack.splice(this._pack.indexOf(value), 1);
-      console.log('discarded ' + value.name);
+  }
+  takeItem( value ){
+    if( value instanceof Item === true && this._pack.length < 3) {
+      this._pack.push( value );
+     }
+      console.log( true );
+  }
+  isItemInPack( value ){
+    if( this._pack.indexOf( value ) > -1 ){
       return true;
-      } else {
-        console.log('cannot discard');
-        return false;
-      }
     }
+  }
+  discardItem( value ){
+    if( this.isItemInPack( value ) === true){
+      this._pack.splice(this._pack.indexOf( value ),1 );
+    }
+    console.log( value.name + ' was successfully discarded' );
+    return true;
+  }
   checkPack(){
-    console.log( this._pack);
-  }
-  //weapon check for equip
-  weaponCheck(value){
-      if (value instanceof Weapon === true){
-      return true;
-    }
-  }
-  //check pack for equip
-  packCheck( value ){
-    if (this._pack.indexOf(value) > -1){
-      return true;
-    }
+    console.log( this.getPack() );
   }
   equip( value ){
-    if (this.weaponCheck(value) === true && packCheck(value) === true){
-    this._equipped = value;
+    var exchange;
+    if( this.equipped !== false && value instanceof Weapon === true && this.isItemInPack( value ) === true){
+      exchange = this.equipped;
+      this.equipped = value;
+      this.discardItem( value );
+      this.takeItem( exchange );
     }
-    if (this.weaponCheck(value) === false){
+    if( this.equipped === false && value instanceof Weapon === true && this.isItemInPack( value ) === true ){
+    this.equipped = value ;
+    this.discardItem( value );
+    }
+  }
+  eat( value ){
+    if( value instanceof Food === true && this.isItemInPack( value ) === true){
+      this._health += value.energy;
+      this.discardItem( value );
+    }
+    if (this.health > this.getMaxHealth()) {
+      this.health = this.getMaxHealth();
+    }
+  }
+  useItem( value ){
+    if( value instanceof Food === true ){
+      this.eat( value );
+    }
+    if( value instanceof Weapon === true ){
+      this.equip ( value );
+    }
+    this.discardItem( value );
+  }
+  equippedWith(){
+    if( this.equipped !== false ){
+    console.log( this._name );
+    console.log( this._equipped.name || false );
+    }
+    if( this.equipped === false ){
+      console.log( this._name + ' has no weapon.');
       return false;
     }
   }
 }
-
-var player1 = new Player('p1');
-var item1 = new Item('apple');
-player1.packCheck(item1);
-
-
-
+var player = new Player ('Kat', 20, 69, 100);
+//var hotWing = new Food(1000);
+var pizza = new Weapon('pizzagun');
+//var fork = new Weapon('fork');
+//var phone = new Weapon('phone');
+//var dildo = new Weapon('dildo');
+//player.takeItem(hotWing);
+//player.takeItem(dildo);
+player.takeItem(pizza);
+//player.equip( dildo );
+//player.checkPack();
+//player.equip( pizza );
+player.useItem( pizza );
+player.equippedWith();
 /**
  * Weapon Extends Item Class
  * -----------------------------
@@ -380,7 +407,46 @@ player1.packCheck(item1);
  * @property {number} speed
  * @property {boolean} isAlive      Default value should be `true`.
  */
+class Zombie{
+  constructor( health, strength, speed ){
+    this._health = health;
+    this._strength = strength;
+    this._speed = speed;
+    this._maxHealth = health;
+    this._isAlive = true;
+  }
+  get health(){
+    return this._health;
+  }
+  set health( value ){
+    if( typeof value === 'number'){
+      this._health = value;
+    }
+  }
+  get strength(){
+    return this._strength;
+  }
+  set strength( value ){
+    if( typeof value === 'number' ){
+      this._strength = value;
+    }
+  }
+  get speed(){
+    return this._speed;
+  }
+  set speed( value ){
+    if( typeof value === 'number' ){
+      this._speed = value;
+    }
+  }
+  get isAlive(){
+    return this._isAlive;
+  }
+}
 
+
+var zom = new Zombie(30,20,10);
+console.log(zom.health);
 
 /**
  * Class => FastZombie(health, strength, speed)
@@ -396,6 +462,11 @@ player1.packCheck(item1);
  * @param {number} strength         The zombie's strength.
  * @param {number} speed            The zombie's speed.
  */
+class FastZombie extends Zombie {
+  constructor( health, strength, speed ){
+    super( health, strength ,speed);
+  }
+}
 
 
 /**
@@ -419,7 +490,11 @@ player1.packCheck(item1);
  * @param {number} strength         The zombie's strength.
  * @param {number} speed            The zombie's speed.
  */
-
+class StrongZombie extends Zombie {
+  constructor( health, strength, speed ){
+    super( health, strength, speed);
+  }
+}
 
 /**
  * StrongZombie Extends Zombie Class
@@ -442,12 +517,22 @@ player1.packCheck(item1);
  * @param {number} strength         The zombie's strength.
  * @param {number} speed            The zombie's speed.
  */
-
+class RangedZombie extends Zombie {
+  constructor( health, strength, speed ){
+    super( health, strength, speed );
+  }
+}
 
 /**
  * RangedZombie Extends Zombie Class
  * -----------------------------
  */
+
+ class ExplodingZombie extends Zombie {
+  constructor( health, strength, speed ){
+    super( health, strength, speed );
+  }
+ }
 
 
 
